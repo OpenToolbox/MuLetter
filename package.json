@@ -1,5 +1,5 @@
 {
-  "name": "muletter-server",
+  "name": "muletter",
   "version": "0.1.0",
   "description": "µLetter or MuLetter is a lightweight and open source alternative to MailChimp and others newsletter management systems",
   "keywords": [
@@ -21,7 +21,7 @@
   "homepage": "http://opentoolbox.github.io/muletter",
   "repository": {
     "type": "git",
-    "url": "https://github.com/opentoolbox/muletter-server"
+    "url": "https://github.com/opentoolbox/muletter"
   },
 
   "engines": {
