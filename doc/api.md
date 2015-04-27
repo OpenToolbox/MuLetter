@@ -56,7 +56,51 @@
 **409** wrong email or password
 
 
+### Get posts
+From **:num** to **:num+10**, the newest to the oldest. If the parameter **:num** is empty, it will be set to **0** by default.
+
+**Request**
+
+    GET /posts/:num
+
+**Return**
+
+    {
+      "data": {
+        "posts" : [
+          {
+            "object": "My Object",
+            "postDate": timePostDate,
+            "body": "lorem ipsum ...."
+          },
+          ...
+        ]
+      }
+    }
+
+
+
 ## Auth Requests - JSON WebSockets
+
+### Authentication on 443 port
+
+**Parameters**
+
+    {
+      "session": {
+        "id": hash
+        "expires": timeExpirationDate
+      }
+    }
+
+### JSON object type for requests
+
+    {
+      "method": "GET",
+      "url": "/subcribers",
+      "body": parameters  
+    }
+
 
 ### Get subscribers
 From **:num** to **:num+10**, the newest to the oldest. If the parameter **:num** is empty, it will be set to **0** by default.
@@ -72,12 +116,14 @@ To search a specific **:email**
 **Return**
 
     {
-      "data": [
-        {"email": "kim@gmail.com"},
-        {"email": "sam@outlook.com"},
-        {"email": "seif785@yahoo.com"},
-        ...
-      ]
+      "data": {
+        "subscribers": [
+            {"email": "kim@gmail.com"},
+            {"email": "sam@outlook.com"},
+            {"email": "seif785@yahoo.com"},
+            ...
+          ]
+        }
     }
 
 ### Export the subscribers list
@@ -89,7 +135,9 @@ To search a specific **:email**
 **Return**
 
     {
-      "data": "kim@gmail.com\nsam@outlook.com\nseif785@yahoo.com\n..."
+      "data": {
+        "subscribers": "kim@gmail.com\nsam@outlook.com\nseif785@yahoo.com\n..."
+        }
     }
 
 ### Insert new subscribers
@@ -114,7 +162,9 @@ To search a specific **:email**
 **Return**
 
     {
-      "data": numberDeleted
+      "data": {
+        "subscribers": numberDeleted
+      }
     }
 
 
@@ -133,6 +183,162 @@ To search a specific **:email**
 **Errors**
 
 **409** does not exist
+
+
+### Add a draft
+
+**Request**
+
+    PUT /posts
+
+**Parameters**
+
+    {
+      "object": "My Object",
+      "body": "lorem ipsum..."
+    }
+
+**Return**
+
+    {
+      "data": {
+        "posts": {
+          "_id": "id",
+          "postDate": "0",
+          "draftDate": "time",
+          "object": "My Object",
+          "body": "lorem ipsum..."
+        }
+      }
+    }
+
+
+### Create a post / Send a draft
+
+**Request**
+
+    POST /posts
+
+**Parameters**
+
+    {
+      "_id": "id"
+    }
+
+**Return**
+
+    {
+      "data": {
+        "posts": {
+          "_id": "id",
+          "postDate": "time",
+          "draftDate": "time",
+          "object": "My Object",
+          "body": "lorem ipsum..."
+        }
+      }
+    }
+
+### Get posts and drafts
+From **:num** to **:num+10**, the newest to the oldest. If the parameter **:num** is empty, it will be set to **0** by default. It will also return the drafts at first.
+
+**Request**
+
+    GET /posts/:num
+
+To search a specific string **:string**
+
+    GET /posts/:string/:num
+
+**Return**
+
+    {
+      "data": {
+        "posts":
+          [
+          {
+              "_id":"id",
+              "object": "My Object",
+              "postDate": "0", // means it is a draft
+              "draftDate": "timeDraftDate",
+              "body": "lorem ipsum ...."
+            },
+            {
+              "_id":"id",
+                "object": "My Object",
+                "postDate": "timePostDate", // means it is a post
+                "draftDate": "timeDraftDate",
+                "body": "lorem ipsum ...."
+              },
+            ...
+          ]
+        }
+    }
+
+### Delete all posts and drafts
+
+**Request**
+
+    DELETE /posts/all
+
+**Return**
+
+    {
+      "data": {
+        "posts" : numberDeleted
+      }
+    }
+
+
+### Delete a post or a draft
+
+**Request**
+
+    DELETE /posts
+
+**Parameters**
+
+    {
+      "_id":"id",
+    }
+
+**Errors**
+
+**409** does not exist
+
+
+### Get settings
+
+**Request**
+
+    GET /settings
+
+
+**Return**
+
+    {
+      "data": {
+        "settings": {
+          "expName": "Mu Letter",
+          "expEmail": "me@domain.com"
+        }
+      }
+    }
+
+
+### Edit settings
+
+**Request**
+
+    PATCH /settings
+
+
+**Parameters**
+
+    {
+      "expName": "Mu Letter",
+      "expEmail": "me@domain.com"
+    }
 
 
 ## Errors
