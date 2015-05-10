@@ -6,12 +6,11 @@ var nodemailer = require('nodemailer');
 
 var errors = require('../errors');
 var isEmail = require('../tools').isEmail;
-var musession = require('musession');
-var nedb = require('nedb'), settings = new nedb(global.db_settings);
+var nedb = require('nedb'), db = new nedb(global.db_settings);
 
 function Signin () {
 
-  settings.loadDatabase();
+  db.loadDatabase();
   this.nodemailerSettings = {};
 
 }
@@ -20,7 +19,7 @@ Signin.prototype.constructor = Signin;
 
 Signin.prototype._fetchAdmin = function (email, pwd, next) {
 
-  settings.findOne({name: 'admin'}, function (err, doc) {
+  db.findOne({name: 'admin'}, function (err, doc) {
 
     if (err)
       return next(false);
@@ -32,7 +31,7 @@ Signin.prototype._fetchAdmin = function (email, pwd, next) {
       return next(false);
 
     if (!doc.signed)
-      settings.update({name: 'admin'}, {$set: {signed: 1}});
+      db.update({name: 'admin'}, {$set: {signed: 1}});
 
     next(true);
 
@@ -89,13 +88,13 @@ Signin.prototype.get = function (req, auth, next) {
 
   if (!req.hashUrl[0])
     return next(errors.NotFound());
-  
+
   var email = req.hashUrl[0];
 
   if (this._emailErrors(email, next))
     return;
 
-  settings.findOne({name: 'admin'}, (function (err, doc) {
+  db.findOne({name: 'admin'}, (function (err, doc) {
 
     if (err)
       return next(errors.Conflict('nedb', err));
@@ -123,10 +122,10 @@ Signin.prototype.get = function (req, auth, next) {
             return next(errors.Conflict('bcrypt', err));
 
           if (!doc)
-            settings.insert({name: 'admin', 'email': email, pwd: hash, signed: 0});
+            db.insert({name: 'admin', 'email': email, pwd: hash, signed: 0});
 
           else
-            settings.update({name: 'admin'}, {$set: {'email': email, pwd: hash}});
+            db.update({name: 'admin'}, {$set: {'email': email, pwd: hash}});
 
           next();
 
