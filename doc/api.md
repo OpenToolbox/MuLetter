@@ -109,9 +109,17 @@ From **:num** to **:num+10**, the newest to the oldest. If the parameter **:num*
 
     GET /subscribers/:num
 
-To search a specific **:email**
+To search a specific **:email** encoded with encodeURIComponent
 
     GET /subscribers/:email/:num
+
+If using WebSocket, **:email* can be passed as a JSON parameter.
+
+**Parameters**
+
+    {
+        "email": email;
+    }
 
 **Return**
 
@@ -246,9 +254,17 @@ From **:num** to **:num+10**, the newest to the oldest. If the parameter **:num*
 
     GET /posts/:num
 
-To search a specific string **:string**
+To search a specific string **:string** encoded with encodeURIComponent.
 
     GET /posts/:string/:num
+
+If using WebSocket, **:string** can be passed as a JSON parameter.
+
+**Parameters**
+
+    {
+        "string": string;
+    }
 
 **Return**
 
