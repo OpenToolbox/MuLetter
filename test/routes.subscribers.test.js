@@ -125,7 +125,8 @@ function GetASubscriberWhoNotExists(){
   console.log('Get a subscriber who not exists - email2@gmx.com');
   console.log('#get()');
   console.log('It should return []');
-  var req = {hashUrl:['email2@gmx.com']};
+  var req = {hashUrl:[encodeURIComponent('email2@gmx.com')]};
+  req.body = {};
   Subscribers.get(req, true, function(data) {
       if (data)
       {
@@ -139,7 +140,8 @@ function GetSubscribersWhoExist(){
   console.log('Get subscribers who exists - :name@gmx.com');
   console.log('#get()');
   console.log('It should return an email list');
-  var req = {hashUrl:['@gmx.com', 0]};
+  var req = {hashUrl:[encodeURIComponent('@gmx.com'), 0]};
+  req.body = {};
   Subscribers.get(req, true, function(data) {
       if (data)
       {
