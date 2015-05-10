@@ -1,11 +1,9 @@
 'use strict';
 
 var isEmail = require('../tools').isEmail;
-var musession = require('musession');
 var errors = require('../errors');
 var nedb = require('nedb'), db = new nedb(global.db_subscribers);
 
-module.exports = new Subscribers();
 
 function Subscribers()
 {
@@ -21,33 +19,33 @@ Subscribers.prototype.get = function(req, auth, next) {
     return next(errors.Unauthorized());
 
   // pagination is empty - list subscribers
-  if (!req.hashUrl[0])
+  if (!req.hashUrl[0] && !req.body.email)
   {
     var skip = 0;
     db.find({}, {'email': 1, _id: 0 }).sort({'email': 1}).skip(skip).limit(10).exec(function(err, docs){
       if(!err && docs)
-        next(docs);
+        next({subscribers: docs});
       else
-        next([]);
+        next({subscribers: []});
     });
     return;
   }
 
   // pagination is set - list subscribers
   var skip = parseInt(req.hashUrl[0], 10);
-  if (typeof req.hashUrl[0] === 'number' || skip == req.hashUrl[0])
+  if ((typeof req.hashUrl[0] === 'number' || skip == req.hashUrl[0]) && !req.body.email)
   {
     db.find({}, {'email': 1, _id: 0 }).sort({'email': 1}).skip(skip).limit(10).exec(function(err, docs){
       if(!err && docs)
-        next(docs);
+        next({subscribers: docs});
       else
-        next([]);
+        next({subscribers: []});
     });
     return;
   }
 
   // check if the first arg is a string
-  if (typeof req.hashUrl[0] !== 'string')
+  if ((typeof req.hashUrl[0] !== 'string') && !req.body.email)
     return next(errors.NotFound());
 
   // export
@@ -62,13 +60,16 @@ Subscribers.prototype.get = function(req, auth, next) {
       {
         output =  output + "\n"+ docs[key].email;
       }
-      return next(output);
+      return next({subscribers: output});
     });
     return;
   }
 
   // search a specific mail
-  var email = req.hashUrl[0];
+  if (req.body.email)
+    var email = req.body.email;
+  else
+    var email = decodeURIComponent(req.hashUrl[0]);
   // pagination
   if (!req.hashUrl[1])
     var skip = 0;
@@ -83,9 +84,9 @@ Subscribers.prototype.get = function(req, auth, next) {
   };
   db.find({$where: query}, {'email': 1, _id: 0 }).sort({'email': 1}).skip(skip).limit(10).exec(function(err, docs){
     if(!err && docs)
-      next(docs);
+      next({subscribers: docs});
     else
-      next([]);
+      next({subscribers: []});
   });
   return;
 };
@@ -135,7 +136,7 @@ Subscribers.prototype.delete = function(req, auth, next) {
   if (req.hashUrl[0] && req.hashUrl[0] == 'all')
   {
       db.remove({}, { multi: true }, function(err, numRemoved) {
-        next(numRemoved);
+        next({subscribers: numRemoved});
       });
       return;
   }
@@ -150,3 +151,5 @@ Subscribers.prototype.delete = function(req, auth, next) {
       next();
   });
 };
+
+module.exports = new Subscribers();
