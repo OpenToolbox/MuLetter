@@ -1,6 +1,6 @@
 'use strict';
 
-var nodemailer = require('nodemailer');
+var nodemailer = require('nodemailer'), os = require('os');
 
 var errors = require('../errors');
 var nedb = require('nedb'), db = new nedb(global.db_posts), db_subs = new nedb(global.db_subscribers), db_settings = new nedb(global.db_settings);
@@ -24,13 +24,13 @@ Posts.prototype.get = function(req, auth, next) {
       return (this.postDate > 0);
     };
     var filters = {$where: query};
-    var projections = {_id: 0, postDate: 1, draftDate: 0, object: 1, body: 1};
+    var projections = {_id: 0, postDate: 1, draftDate: 0, subject: 1, body: 1};
     var sort = {postDate: -1};
   }
   else
   {
     var filters = {};
-    var projections = {_id: 1, postDate: 1, draftDate: 1, object: 1, body: 1};
+    var projections = {_id: 1, postDate: 1, draftDate: 1, subject: 1, body: 1};
     var sort = {draftDate: -1, postDate: -1};
   }
 
@@ -100,8 +100,9 @@ Posts.prototype.get = function(req, auth, next) {
     if ((typeof req.hashUrl[1] !== 'number') || (skip != req.hashUrl[1]))
       skip = 0;
   }
+  var stringToLowerCase = string.toLowerCase();
   var query = function() {
-    return (this.object.indexOf(string) !== -1) || (this.body.indexOf(string) !== -1);
+    return (this.subject.toLowerCase().indexOf(stringToLowerCase) !== -1) || (this.body.toLowerCase().indexOf(stringToLowerCase) !== -1);
   };
   db.find({$where: query}, projections).sort(sort).skip(skip).limit(10).exec(function(err, docs){
     if(!err && docs)
@@ -128,35 +129,33 @@ Posts.prototype.post = function(req, auth, next) {
 };
 
 Posts.prototype._send = function(from, emailTo, post, next) {
-
+  var fromName = (from.name)? from.name:global.name;
+  var fromEmail = (from.email)? from.email:'noreply@'+os.hostname();
   var mailSettings = {
-      from: from.name +' <' + from.email + '>',
+      from: fromName +' <' + fromEmail + '>',
       to: emailTo,
       subject: post.subject,
       html: post.body
   };
-
-  nodemailer.createTransport(this.nodemailerSettings).sendMail(mailSettings, (function mailSent (err, info) {
+  var self = this;
+  nodemailer.createTransport(self.nodemailerSettings).sendMail(mailSettings, function (err, info) {
     if (err)
-      next({notifications: {error: err, date: Date.now(), posts:{_id: post.id, subject: post.subject}, to: emailTo}});
+      next({notifications: {error: err, date: Date.now(), posts:{_id: post._id, subject: post.subject}, to: emailTo}});
     else
-      next({notifications: {date: Date.now(), posts:{_id: post.id, subject: post.subject}, to: emailTo}});
+      next({notifications: {date: Date.now(), posts:{_id: post._id, subject: post.subject}, to: emailTo}});
 
-    this.sending.current++;
-    if (this.sending.total >= this.sending.current)
+    self.sending.current = self.sending.current + 1;
+    if (self.sending.total <= self.sending.current)
     {
       // sent state
-      db.update({_id: post._id}, {$set: {postDate:Date.now()}}, (function(err, num, doc) {
-        if (!err)
-          next({posts:doc});
-        else
-          next({posts:post});
-        this.sending = {state: 0};
-      }).bind(this));
+      post.postDate = Date.now();
+      self.sending = {state: 0};
+      db.update({_id: post._id}, {$set: {postDate:post.postDate}});
+      next({posts:post});
     }
-  }).bind(this));
+  });
   return;
-}
+};
 
 Posts.prototype.patch = function(req, auth, next) {
 
@@ -166,63 +165,71 @@ Posts.prototype.patch = function(req, auth, next) {
   if (this.sending.state)
     return next(errors.Conflict('a post is being sent'));
 
+  this.sending.state = 1;
+
   var self = this;
 
-  db.find({_id: req.body._id, postDate: -1}, function(err, doc){
-    if (err || !doc)
+  db.findOne({_id: req.body._id, postDate: -1}, function(err, doc){
+    if (err || !doc) {
+      self.sending.state = 0;
       next(errors.Conflict('does not exist or already sent'));
+    }
     else
     {
       db_subs.loadDatabase(function(err) {
-        if (err)
+        if (err){
+          self.sending.state = 0;
           next(errors.Conflict('can\'t load subscribers list'));
+        }
         else
         {
           db_subs.find({}, function(err, docs) {
-            if (err || !docs)
+            if (err || !docs){
+              self.sending.state = 0;
               next(errors.Conflict('can\'t load subscribers list'));
+            }
             else
             {
               db_settings.loadDatabase(function(err) {
-                if (!err)
+                if (err){
+                  self.sending.state = 0;
                   next(errors.Conflict('can\'t load settings'));
+                }
                 else
                 {
-                  db_settings.find({name: 'from'}, function(err, from) {
+                  db_settings.findOne({name: 'from'}, function(err, from) {
                     if (err || !from)
-                      next(errors.Conflict('can\'t load settings'));
-                    else
-                    {
-                      // lock the post to send
-                      db.update({_id: doc._id}, {$set: {postDate:0}}, function(err, num, doc) {
-                        if (err)
-                          next(errors.Conflict('can\'t lock post to send'));
-                        else
-                        {
-                          // sending state
-                          next({posts:doc});
-                          self.sending = {
-                            state: 1,
-                            total: docs.length,
-                            current: 0
-                          };
-                          // loop all subscribers
-                          for (var i = 0; i < docs.length; i += 1) {
-                            self._send(from, docs[i].email, doc, next);
-                          }
+                      from = {};
+                    // lock the post to send
+                    doc.postDate = 0;
+                    db.update({_id: doc._id}, {$set: {postDate:0}}, {}, function(err) {
+                      if (err){
+                        self.sending.state = 0;
+                        next(errors.Conflict('can\'t lock post to send'));
+                      }
+                      else
+                      {
+                        // sending state
+                        next({posts:doc});
+                        self.sending.total = docs.length;
+                        self.sending.current = 0;
 
+                        // loop all subscribers
+                        for (var i = 0; i < docs.length; i += 1) {
+                          self._send(from, docs[i].email, doc, next);
                         }
-                      });
-                    }
-                  });
+
+                      }
+                    }); // end lock post to send
+                  }); // end load settings from
                 }
-              });
+              }); // end load db settings
             }
-          });
+          }); // end load subscribers
         }
-      });
+      }); // end load db subscribers
     }
-  });
+  }); // end load post
   return;
 
 };
