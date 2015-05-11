@@ -23,7 +23,7 @@ Settings.prototype.post = function() {};
 
 Settings.prototype.put = function() {};
 
-Settings.prototype.path = function() {};
+Settings.prototype.patch = function() {};
 
 Settings.prototype.delete = function() {};
 
