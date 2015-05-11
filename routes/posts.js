@@ -138,9 +138,9 @@ Posts.prototype._send = function(from, emailTo, post, next) {
 
   nodemailer.createTransport(this.nodemailerSettings).sendMail(mailSettings, (function mailSent (err, info) {
     if (err)
-      next({notifications: {error: err, date: Date.now(), posts:{_id: post.id, subject, post.subject}, to: emailTo});
+      next({notifications: {error: err, date: Date.now(), posts:{_id: post.id, subject: post.subject}, to: emailTo}});
     else
-      next({notifications: {date: Date.now(), posts:{_id: post.id, subject, post.subject}, to: emailTo});
+      next({notifications: {date: Date.now(), posts:{_id: post.id, subject: post.subject}, to: emailTo}});
 
     this.sending.current++;
     if (this.sending.total >= this.sending.current)
