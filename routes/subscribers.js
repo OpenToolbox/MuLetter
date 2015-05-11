@@ -79,8 +79,9 @@ Subscribers.prototype.get = function(req, auth, next) {
     if ((typeof req.hashUrl[1] !== 'number') || (skip != req.hashUrl[1]))
       skip = 0;
   }
+  var emailLowerCase = email.toLowerCase();
   var query = function() {
-    return (this.email.indexOf(email) !== -1);
+    return (this.email.toLowerCase().indexOf(emailLowerCase) !== -1);
   };
   db.find({$where: query}, {'email': 1, _id: 0 }).sort({'email': 1}).skip(skip).limit(10).exec(function(err, docs){
     if(!err && docs)
