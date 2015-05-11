@@ -69,7 +69,7 @@ From **:num** to **:num+10**, the newest to the oldest. If the parameter **:num*
       "data": {
         "posts" : [
           {
-            "object": "My Object",
+            "subject": "My Subject",
             "postDate": timePostDate,
             "body": "lorem ipsum ...."
           },
@@ -93,7 +93,7 @@ From **:num** to **:num+10**, the newest to the oldest. If the parameter **:num*
       }
     }
 
-### JSON object type for requests
+### JSON subject type for requests
 
     {
       "method": "GET",
@@ -193,59 +193,111 @@ If using WebSocket, **:email* can be passed as a JSON parameter.
 **409** does not exist
 
 
-### Add a draft
-
-**Request**
-
-    PUT /posts
-
-**Parameters**
-
-    {
-      "object": "My Object",
-      "body": "lorem ipsum..."
-    }
-
-**Return**
-
-    {
-      "data": {
-        "posts": {
-          "_id": "id",
-          "postDate": "0",
-          "draftDate": "time",
-          "object": "My Object",
-          "body": "lorem ipsum..."
-        }
-      }
-    }
-
-
-### Create a post / Send a draft
+### Add a post-draft
 
 **Request**
 
     POST /posts
 
+
 **Parameters**
 
     {
-      "_id": "id"
+      "subject": "mailSubject",
+      "body": "htmlBody"
     }
+
 
 **Return**
 
     {
       "data": {
-        "posts": {
-          "_id": "id",
-          "postDate": "time",
-          "draftDate": "time",
-          "object": "My Object",
-          "body": "lorem ipsum..."
+        "posts" : {
+          "_id": "postId",
+          "subject": "mailSubject",
+          "postDate": "0", // means it is a draft
+          "draftDate": "timeDraftDate",
+          "body": "htmlBody"
         }
       }
     }
+
+
+### Send a post-draft / Create a post
+
+**Request**
+
+    PATCH /posts
+
+
+**Parameters**
+
+    {
+      "_id": "postId"
+    }
+
+
+**Return**
+
+Sending
+
+    {
+      "data": {
+        "posts" : {
+          "_id": "postId",
+          "subject": "mailSubject",
+          "postDate": 0, // means the post is being sent
+          "draftDate": "timeDraftDate",
+          "body": "htmlBody"
+        }
+      }
+    }
+
+
+Sent to any subscribers
+
+    {
+      "data": {
+        "posts" : {
+          "_id": "postId",
+          "subject": "mailSubject",
+          "postDate": "timePostDate", // means the draft has been sent
+          "draftDate": "timeDraftDate",
+          "body": "htmlBody"
+        }
+      }
+    }
+
+
+**Errors**
+
+**409** a post is being sent
+
+**409** does not exist or already sent
+
+**409** can't load subscribers list
+
+**409** can't load settings
+
+**409** can't lock post to send
+
+
+**Notifications**
+
+    {
+      "data": {
+        "notifications": {
+          "error": {"nodemailer"....}, // means this is a notification error
+          "posts": {
+            "_id": "id",
+            "subject": "subject"
+          },
+          "date": "timeDate",
+          "to": "emailTo"
+        }
+      }
+    }
+
 
 ### Get posts and drafts
 From **:num** to **:num+10**, the newest to the oldest. If the parameter **:num** is empty, it will be set to **0** by default. It will also return the drafts at first.
@@ -273,18 +325,18 @@ If using WebSocket, **:string** can be passed as a JSON parameter.
         "posts":
           [
           {
-              "_id":"id",
-              "object": "My Object",
+              "_id":"postId",
+              "subject": "mailSubject",
               "postDate": "0", // means it is a draft
               "draftDate": "timeDraftDate",
-              "body": "lorem ipsum ...."
+              "body": "htmlBody"
             },
             {
-              "_id":"id",
-                "object": "My Object",
-                "postDate": "timePostDate", // means it is a post
-                "draftDate": "timeDraftDate",
-                "body": "lorem ipsum ...."
+              "_id":"postId",
+              "subject": "mailSubject",
+              "postDate": "timePostDate", // means it is a post
+              "draftDate": "timeDraftDate",
+              "body": "htmlBody"
               },
             ...
           ]
@@ -335,8 +387,10 @@ If using WebSocket, **:string** can be passed as a JSON parameter.
     {
       "data": {
         "settings": {
-          "expName": "Mu Letter",
-          "expEmail": "me@domain.com"
+          "from": {
+            "name": "Mu Letter",
+            "email": "me@domain.com"
+          }
         }
       }
     }
@@ -352,8 +406,10 @@ If using WebSocket, **:string** can be passed as a JSON parameter.
 **Parameters**
 
     {
-      "expName": "Mu Letter",
-      "expEmail": "me@domain.com"
+      "from": {
+        "name": "Mu Letter",
+        "email": "me@domain.com"
+      }
     }
 
 
