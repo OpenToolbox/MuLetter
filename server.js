@@ -34,8 +34,11 @@ http.createServer(function handleRequest(req, res) {
 // Auth Requests JSON-WebSockets
 WebSocket.prototype.sendAuthorized = function() {
   router.send(this.req, true, (function(data) {
-    this.res.data = data;
-    this.send(JSON.stringify(this.res));
+    if (data !== '')
+    {
+      this.res.data = data;
+      this.send(JSON.stringify(this.res));
+    }
   }).bind(this));
 };
 WebSocket.prototype.sendUnauthorized = function() {
