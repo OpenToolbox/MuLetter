@@ -1,29 +1,54 @@
-var path = require('path'), MailDev = require('maildev');
-global.db_settings = path.resolve('.')+'/test/db_settings.test.json';
+global.name = 'MuLetter';
+global.db_settings = 'test/db_settings.test.json';
 var nedb = require('nedb'), db = new nedb(global.db_settings);
 var errors = require('../errors');
 var Settings = require('../routes/settings');
+var _ = console.log;
 
-Settings.nodemailerSettings = {
-  port: 1025,
-  ignoreTLS: true
-};
-
-var maildev = new MailDev({
-  smtp: 1025,
-  web: 1080,
-  open: true
-});
-
-maildev.on('new', function(email){
-  console.log("\n%s", email.text);
-});
+bindTest(init);
 
 function bindTest(toBind, time){
   setTimeout(function() {
-    console.log(" ");
+    _(" ");
     toBind();
   }, (time? time: 1000));
 }
 
-//bindTest(,2000);
+function init(){
+  db.loadDatabase(function(err){
+    if (err)
+      _('Can\'t load settings database')
+    else
+      bindTest(getSettings);
+  });
+}
+
+function getSettings(){
+  _('Get Settings');
+  _('#get');
+  _('it should return globale.name (MuLetter) as fullname and a generic email');
+  Settings.get({}, 1, function(data){
+    _(data);
+    bindTest(editSettings);
+  });
+}
+
+function editSettings(){
+  _('EditSettings');
+  _('#post()');
+  _('Fullname: My Name, Email: myname@gmail.com');
+  var req = {body: {fullname:'My Name', email: 'myname@gmail.com'}};
+  Settings.post(req, 1, function(data){
+    bindTest(checkEditSettings);
+  });
+}
+
+function checkEditSettings(){
+  _('Check Edit Settings');
+  _('#get');
+  Settings.get({}, 1, function(data){
+    _(data);
+    _('ALL TESTS ARE DONE');
+    require('fs').unlink(global.db_settings);
+  });
+}

@@ -1,31 +1,38 @@
 'use strict';
 
 var os = require('os');
-var bcrypt = require('bcrypt'), crypto = require('crypto');
-var nodemailer = require('nodemailer');
-
 var errors = require('../errors');
-var isEmail = require('../tools').isEmail;
-var nedb = require('nedb'), db = new nedb(global.db_settings);
+var nedb = require('nedb');
+var db = new nedb(global.db_settings);
 
 function Settings () {
-
-  db.loadDatabase();
-  this.nodemailerSettings = {};
-
+  db.loadDatabase()
 }
 
-Settings.prototype.constructor = Settings;
+Settings.prototype.get = function(req, auth, next) {
+  if (!auth)
+    return next(errors.Unauthorized());
 
-Settings.prototype.get = function() {};
+  db.findOne({name:'from'}, {}, function(err, from) {
+    var output = {};
+    output.fullname = (!err && from && from.fullname)? from.fullname:global.name;
+    output.email = (!err && from && from.email)? from.email:'noreply@'+os.hostname();
+    next(output);
+  });
+};
 
-Settings.prototype.post = function() {};
+Settings.prototype.post = function(req, auth, next) {
+  if (!auth)
+    return next(errors.Unauthorized());
 
-Settings.prototype.put = function() {};
-
-Settings.prototype.patch = function() {};
-
-Settings.prototype.delete = function() {};
+  if (req.body.fullname && req.body.email)
+  {
+    db.remove({name:'from'}, {}, function(err){
+      db.insert({name:'from', fullname: req.body.fullname, email: req.body.email});
+    });
+  }
+  return next();
+};
 
 
 module.exports = new Settings();
