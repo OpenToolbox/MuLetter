@@ -388,7 +388,7 @@ If using WebSocket, **:string** can be passed as a JSON parameter.
       "data": {
         "settings": {
           "from": {
-            "name": "Mu Letter",
+            "fullname": "Mu Letter",
             "email": "me@domain.com"
           }
         }
@@ -400,14 +400,14 @@ If using WebSocket, **:string** can be passed as a JSON parameter.
 
 **Request**
 
-    PATCH /settings
+    POST /settings
 
 
 **Parameters**
 
     {
       "from": {
-        "name": "Mu Letter",
+        "fullname": "Mu Letter",
         "email": "me@domain.com"
       }
     }
