@@ -37,7 +37,7 @@ function editSettings(){
   _('EditSettings');
   _('#post()');
   _('Fullname: My Name, Email: myname@gmail.com');
-  var req = {body: {fullname:'My Name', email: 'myname@gmail.com'}};
+  var req = {body: {from: {fullname:'My Name', email: 'myname@gmail.com'}}};
   Settings.post(req, 1, function(data){
     bindTest(checkEditSettings);
   });

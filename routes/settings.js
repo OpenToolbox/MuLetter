@@ -25,10 +25,10 @@ Settings.prototype.post = function(req, auth, next) {
   if (!auth)
     return next(errors.Unauthorized());
 
-  if (req.body.fullname && req.body.email)
+  if (req.body.from && req.body.from.fullname && req.body.from.email)
   {
     db.remove({name:'from'}, {}, function(err){
-      db.insert({name:'from', fullname: req.body.fullname, email: req.body.email});
+      db.insert({name:'from', fullname: req.body.from.fullname, email: req.body.from.email});
     });
   }
   return next();
