@@ -129,7 +129,7 @@ Posts.prototype.post = function(req, auth, next) {
 };
 
 Posts.prototype._send = function(from, emailTo, post, next) {
-  var fromName = (from.name)? from.name:global.name;
+  var fromName = (from.fullname)? from.fullname:global.name;
   var fromEmail = (from.email)? from.email:'noreply@'+os.hostname();
   var mailSettings = {
       from: fromName +' <' + fromEmail + '>',
