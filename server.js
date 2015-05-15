@@ -2,8 +2,8 @@
 
 // command dev mode : node server.js httpPort wsPort
 
-var http = require('http'), httpPort = ((process.argv[0])? process.argv[0]:80);
-var WebSocket = require('ws'), wss = new WebSocket.Server({port:((process.argv[1])? process.argv[1]:443)});
+var http = require('http'), httpPort = ((process.argv[2])? process.argv[2]:80);
+var WebSocket = require('ws'), wss = new WebSocket.Server({port:((process.argv[3])? process.argv[3]:443)});
 var router = require('./router');
 var errors = require('./errors');
 var JSONParser = require('./tools').JSONParser;
