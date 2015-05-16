@@ -1,6 +1,6 @@
 #!/bin/env node
 
-// command dev mode : node server.js httpPort wsPort
+// command dev mode : node server.js port
 var http = require('http'), httpPort = ((process.argv[2])? process.argv[2]:80);
 var WebSocket = require('ws'), wss = new WebSocket.Server({port:((process.argv[2])? process.argv[2]:80)});
 var router = require('./router');
