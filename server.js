@@ -1,8 +1,8 @@
 #!/bin/env node
 
-// command dev mode : node server.js port
-var http = require('http'), httpPort = ((process.argv[2])? process.argv[2]:80);
-var WebSocket = require('ws'), wss = new WebSocket.Server({port:((process.argv[2])? process.argv[2]:80)});
+var config = require('./config');
+var http = require('http');
+var WebSocket = require('ws'), wss = new WebSocket.Server({port: config.port.ws, host: config.host});
 var router = require('./router');
 var errors = require('./errors');
 var JSONParser = require('./tools').JSONParser;
@@ -30,7 +30,7 @@ http.createServer(function handleRequest(req, res) {
       res.end(JSON.stringify({'data':data}));
     });
   });
-}).listen(httpPort);
+}).listen(config.port.http, config.host);
 
 // Auth Requests JSON-WebSockets
 WebSocket.prototype.sendAuthorized = function() {
@@ -55,8 +55,9 @@ wss.on('connection', function connection(ws) {
     ws.req = JSONParser(msg);
     ws.res ={};
     // Check if a session exists
-    //DEV
-    ws.connection = 1;
+    //DEBUG
+	if (config.debug)
+		ws.connection = 1;
     if (ws.connection)
       return ws.sendAuthorized();
     if (!ws.req.session || !ws.req.session.id)
