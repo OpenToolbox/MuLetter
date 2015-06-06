@@ -15,6 +15,17 @@ routes.subscribers = require('./routes/subscribers');
 routes.posts = require('./routes/posts');
 routes.settings = require('./routes/settings');
 
+// Config
+var config = require('./config');
+routes.signin.nodemailerSettings = {
+  port: config.sendmail,
+  debug: config.debug
+};
+routes.posts.nodemailerSettings = {
+  port: config.sendmail,
+  debug: config.debug
+};
+
 // Errors
 var errors = require('./errors');
 
