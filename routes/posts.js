@@ -138,7 +138,11 @@ Posts.prototype._send = function(from, emailTo, post, next) {
       html: post.body
   };
   var self = this;
-  nodemailer.createTransport(self.nodemailerSettings).sendMail(mailSettings, function (err, info) {
+  if (Object.keys(this.nodemailerSettings).length !== 0)
+    var transport = nodemailer.createTransport(this.nodemailerSettings);
+  else
+	var transport = nodemailer.createTransport();
+  transport.sendMail(mailSettings, function (err, info) {
     if (err)
       next({notifications: {error: err, date: Date.now(), posts:{_id: post._id, subject: post.subject}, to: emailTo}});
     else

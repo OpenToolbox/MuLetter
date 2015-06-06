@@ -110,8 +110,13 @@ Signin.prototype.get = function (req, auth, next) {
         subject: 'Authentication Password',
         text: 'E-mail : ' + email + "\n"+'Password : ' + randomPassword
     };
-
-    nodemailer.createTransport(this.nodemailerSettings).sendMail(mailSettings, function mailSent (err, info) {
+	
+	if (Object.keys(this.nodemailerSettings).length !== 0)
+		var transport = nodemailer.createTransport(this.nodemailerSettings);
+	else
+		var transport = nodemailer.createTransport();
+	
+    transport.sendMail(mailSettings, function mailSent (err, info) {
 
         if (err)
           return next(errors.Conflict('nodemailer', err));
