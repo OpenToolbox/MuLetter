@@ -82,14 +82,13 @@ From **:num** to **:num+10**, the newest to the oldest. If the parameter **:num*
 
 ## Auth Requests - JSON WebSockets
 
-### Authentication on 443 port
+### Authentication on 8000 port
 
 **Parameters**
 
     {
       "session": {
         "id": hash
-        "expires": timeExpirationDate
       }
     }
 
