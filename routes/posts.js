@@ -217,7 +217,8 @@ Posts.prototype.patch = function(req, auth, next) {
                         next({posts:doc});
                         self.sending.total = docs.length;
                         self.sending.current = 0;
-
+			
+			/*****ASYNC LOOP - find an alternative ****/
                         // loop all subscribers
                         for (var i = 0; i < docs.length; i += 1) {
                           self._send(from, docs[i].email, doc, next);
