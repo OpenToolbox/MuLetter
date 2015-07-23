@@ -56,6 +56,7 @@ Subscribers.prototype.get = function(req, auth, next) {
         return next(errors.Conflict('nothing to export', err));
       // convert to string
       var output = docs.shift().email;
+      /*****ASYNC LOOP - find an alternative ****/
       for (var key in docs)
       {
         output =  output + "\n"+ docs[key].email;
