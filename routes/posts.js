@@ -128,9 +128,9 @@ Posts.prototype.post = function(req, auth, next) {
 
 };
 
-Posts.prototype._send = function(from, emailTo, post, next) {
-  var fromName = (from.fullname)? from.fullname:global.name;
-  var fromEmail = (from.email)? from.email:'noreply@'+os.hostname();
+Posts.prototype._send = function(fromID, emailTo, post, next) {
+  var fromName = (fromID.fullname)? emailF.fullname:global.name;
+  var fromEmail = (fromID.email)? fromID.email:'noreply@'+os.hostname();
   var mailSettings = {
       from: fromName +' <' + fromEmail + '>',
       to: emailTo,
@@ -201,9 +201,9 @@ Posts.prototype.patch = function(req, auth, next) {
                 }
                 else
                 {
-                  db_settings.findOne({name: 'from'}, function(err, from) {
-                    if (err || !from)
-                      from = {};
+                  db_settings.findOne({name: 'from'}, function(err, fromID) {
+                    if (err || !fromID)
+                      fromID = {};
                     // lock the post to send
                     doc.postDate = 0;
                     db.update({_id: doc._id}, {$set: {postDate:0}}, {}, function(err) {
@@ -218,11 +218,10 @@ Posts.prototype.patch = function(req, auth, next) {
                         self.sending.total = docs.length;
                         self.sending.current = 0;
 			
-			/*****ASYNC LOOP - find an alternative ****/
-                        // loop all subscribers
-                        for (var i = 0; i < docs.length; i += 1) {
-                          self._send(from, docs[i].email, doc, next);
-                        }
+			// loop all subscribers
+                        docs.forEach(function(el, index) {
+                          self._send(fromID, el.email, doc, next);
+                        });
 
                       }
                     }); // end lock post to send
