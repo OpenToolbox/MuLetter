@@ -1,11 +1,9 @@
 #!/bin/env node
 
 var http = require('http'), 
-path = require('path'), 
 config = require('./config'), 
 errors = require('./errors'), 
 router = require('./router')
-JSONParser = require('./tools').JSONParser, 
 bodyParser = require('./tools').bodyParser;
 
 
@@ -25,14 +23,15 @@ http.createServer(function handleRequest(req, res) {
     req.body = body;
 
     // If a key exists and matches the one in config.js, set auth to true
-    var auth = (req.body.key == config.key) ? true : false;
+    var auth = req.body.key == config.key ? true : false;
    
     router(req, auth, function (data) {
 
-      if ((typeof data === 'object') && data.statusCode) {
+      if (typeof data === 'object' && data.statusCode) {
         res.statusCode = data.statusCode;
         delete data.statusCode;
       }
+
       res.end(JSON.stringify(data));
     
     });
