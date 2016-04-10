@@ -16,7 +16,7 @@ http.createServer(function handleRequest(req, res) {
   res.setHeader("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
   
   // REST Methods and JSON
-  res.setHeader("Access-Control-Allow-Methods", "POST, PUT, PATCH, DELETE");
+  res.setHeader("Access-Control-Allow-Methods", "POST");
   res.setHeader("Content-Type", "application/json");
    
   // Get request body
@@ -27,13 +27,13 @@ http.createServer(function handleRequest(req, res) {
     // If a key exists and matches the one in config.js, set auth to true
     var auth = (req.body.key == config.key) ? true : false;
    
-    router.send(req, auth, function (data) {
+    router(req, auth, function (data) {
 
       if ((typeof data === 'object') && data.statusCode) {
         res.statusCode = data.statusCode;
         delete data.statusCode;
       }
-      res.end(JSON.stringify({'data':data}));
+      res.end(JSON.stringify(data));
     
     });
 
