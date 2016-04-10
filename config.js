@@ -1,10 +1,6 @@
-var config = {
+module.exports = {
 	debug: 0,
 	host: process.env.OPENSHIFT_NODEJS_IP || '127.0.0.1',
-	port: {
-		http: process.env.OPENSHIFT_NODEJS_PORT || process.env.PORT || 80,
-		ws: 8000
-	}
+	port: process.env.OPENSHIFT_NODEJS_PORT || process.env.PORT || 80,
+	key: '1234'	
 };
-
-module.exports = config;
