@@ -1,7 +1,7 @@
 {
-  "name": "muletter",
-  "version": "0.1.0",
-  "description": "µLetter or MuLetter is a lightweight and open source alternative to MailChimp and others newsletter management systems",
+  "name": "muletter-server",
+  "version": "0.2.0",
+  "description": "backend managment subsribers of a µLetter / MuLetter app, a lightweight and open source newsletter management system",
   "keywords": [
     "Node.js",
     "newsletter",
@@ -18,10 +18,10 @@
     "email": "kim.himitsu@gmail.com",
     "url": "http://kimihub.github.io/"
   },
-  "homepage": "http://opentoolbox.github.io/muletter",
+  "homepage": "http://opentoolbox.github.io/muletter-server",
   "repository": {
     "type": "git",
-    "url": "https://github.com/opentoolbox/muletter"
+    "url": "https://github.com/opentoolbox/muletter-server"
   },
 
   "engines": {
@@ -29,17 +29,11 @@
   },
 
   "dependencies": {
-    "bcrypt": "~0.8.3",
-    "nedb": "~1.1.2",
-    "nodemailer": "~1.3.4",
-    "musession": "~0.3.5",
-    "ws":"~0.7.2"
   },
 
   "devDependencies": {
     "request": "2.57.x",
     "prompt": "0.2.x",
-    "maildev": "0.10.x"
   },
 
   "main": "server.js",
