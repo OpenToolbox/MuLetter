@@ -23,17 +23,9 @@
     "type": "git",
     "url": "https://github.com/opentoolbox/muletter-server"
   },
-  
-  "dependencies": {
-  },
-
   "devDependencies": {
     "request": "2.57.x",
     "prompt": "0.2.x",
   },
-
-  "main": "server.js",
-  "scripts": {
-      "test": "node test/main.js"
-  }
+  "main": "server.js"
 }
