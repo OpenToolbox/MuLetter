@@ -1,9 +1,18 @@
-#µLetter
+#µLetter-server
 
-**µLetter** or **MuLetter** is a lightweight and open source alternative to [MailChimp](http://mailchimp.com/), [TinyLetter](http://tinyletter.com/) and others newsletter management systems.
+**µLetter-server** is the backend server api to manage the subscribers of a [https://github.com/OpenToolbox/MuLetter](µLetter web app)
 
-This application is currently developing. If you want more informations, check the roadmap and api progress :
+## Clone, Config, Deploy
 
-[https://github.com/OpenToolbox/MuLetter/wiki/API](https://github.com/OpenToolbox/MuLetter/wiki/API)
 
-[https://github.com/OpenToolbox/MuLetter/wiki/Roadmap](https://github.com/OpenToolbox/MuLetter/wiki/Roadmap)
+1) Clone or download this repo
+
+2) Configure your **host**, **port** and private **key** in config.json
+
+3) Deploy all files on OpenShift, Heroku, AWS, your own server...
+
+
+
+## API
+
+[https://github.com/OpenToolbox/MuLetter-server/wiki/API](https://github.com/OpenToolbox/MuLetter-server/wiki/API)
