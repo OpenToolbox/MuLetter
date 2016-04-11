@@ -1,5 +1,7 @@
 'use strict';
 
+var fs = require('fs');
+
 module.exports.isEmail = isEmail;
 
 function isEmail (email) {
@@ -9,9 +11,9 @@ function isEmail (email) {
 
 }
 
-module.exports.JSONParser = JSONParser;
+module.exports.jsonParser = jsonParser;
 
-function JSONParser(data) {
+function jsonParser(data) {
 
   try {
     var body = {}
@@ -21,9 +23,13 @@ function JSONParser(data) {
       body = JSON.parse(rawBody);
     }
 
-  } catch (ex) {
+  } 
+
+  catch (ex) {
     body = {error: ex};
-  } finally {
+  } 
+
+  finally {
     return body;
   }
 
@@ -41,7 +47,45 @@ function bodyParser(req, cb) {
   });
 
   req.on('end', function() {
-    cb(JSONParser(buf));
+    cb(jsonParser(buf));
   });
 
 }
+
+module.exports.jsonOpen = jsonOpen;
+
+function jsonOpen (fp) {
+
+  if (!fp) {
+    return; 
+  }
+
+  this.fp = fp;
+
+  try {
+    this.raw = this.initSchema(require(this.fp));
+  }
+
+  catch (ex) {
+    this.raw = this.initSchema({});
+    this.writeSync();
+  }
+
+}
+
+jsonOpen.prototype.initSchema = function(raw) {
+
+  return {
+    cursor: raw.cursor || 0,
+    data: raw.data || new Array() 
+  };
+
+};
+
+jsonOpen.prototype.writeSync = function() {
+  
+  fs.writeFileSync(this.fp, JSON.stringify(this.raw));
+
+};
+
+

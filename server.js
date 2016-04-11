@@ -4,8 +4,11 @@ var http = require('http'),
 config = require('./config'), 
 errors = require('./errors'), 
 router = require('./router')
-bodyParser = require('./tools').bodyParser;
+bodyParser = require('./tools').bodyParser,
+jsonOpen = require('./tools').jsonOpen;
 
+// open json data
+global.json = new jsonOpen('./data.json');
 
 http.createServer(function handleRequest(req, res) {
   
