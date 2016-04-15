@@ -1,43 +1,46 @@
 'use strict';
 
-var isEmail = require('./tools').isEmail, errors = require('./errors');
+var isEmail = require('./tools').isEmail,
+errors = require('./errors'),
+jsonOpen = require('./tools').jsonOpen,
+db = new jsonOpen('./data.json');
 
-module.exports.new = function(req, auth, next) {
-  
+module.exports.add = function(req, auth, next) {
+
   var email = req.body.email;
 
   if (!email || email && !isEmail(email)) {
     return next(errors.Conflict('wrong email'));
   }
 
-  if (global.json.data.indexOf(email)) {
+  if (db.raw.data.indexOf(email) !== -1) {
     return next(errors.Conflict('already exists'));
   }
 
-  global.json.data.push(email);
-  global.json.writeSync();
-  
+  db.raw.data.push(email);
+  db.writeSync();
+
   next({data: email});
 
 };
 
 module.exports.remove = function(req, auth, next) {
-  
+
   var email = req.body.email, index;
 
   if (!email || email && !isEmail(email)) {
     return next(errors.Conflict('wrong email'));
   }
 
-  index = global.json.data.indexOf(email) || -1;
+  index = db.raw.data.indexOf(email);
 
   if (index == -1) {
     return next(errors.Conflict('does not exist'));
   }
 
-  delete global.json.data[index];
-  global.json.writeSync();
-  
+  delete db.raw.data[index];
+  db.writeSync();
+
   next({data: email});
 
 };
@@ -47,16 +50,16 @@ module.exports.import = function(req, auth, next) {
   if (!auth) {
     return next(errors.Unauthorized());
   }
-  
+
   if (!req.body.data) {
     return next(errors.Conflict('data to import is empty'));
   }
 
-  global.json.data.slice(global.json.data.cursor, global.json.data.length);
-  global.json.data.concat(req.body.data.split("\n"));
-  global.json.writeSync();
+  db.raw.data.slice(db.raw.cursor, db.raw.data.length);
+  db.raw.data.concat(req.body.data.split("\n"));
+  db.writeSync();
 
-  next({data: global.json.data.join("\n")});
+  next({data: db.raw.data.join("\n")});
 
 };
 
@@ -66,9 +69,24 @@ module.exports.export = function(req, auth, next) {
     return next(errors.Unauthorized());
   }
 
-  global.json.data.cursor = global.json.data.length;
-  global.json.writeSync();
+  db.raw.cursor = db.raw.data.length;
+  db.writeSync();
 
-  next({data: global.json.data.join("\n")});
+  next({data: db.raw.data.join("\n")});
+
+};
+
+module.exports.empty = function(req, auth, next) {
+
+  if (!auth) {
+    return next(errors.Unauthorized());
+  }
+
+  db.raw.cursor = 0;
+  delete db.raw.data;
+  db.raw.data = new Array();
+  db.writeSync();
+
+  next({data: ""});
 
 };

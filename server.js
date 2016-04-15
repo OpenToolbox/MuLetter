@@ -1,33 +1,33 @@
 #!/bin/env node
 
-var http = require('http'), 
-config = require('./config'), 
-errors = require('./errors'), 
+var http = require('http'),
+config = require('./config'),
+errors = require('./errors'),
 router = require('./router')
 bodyParser = require('./tools').bodyParser,
 jsonOpen = require('./tools').jsonOpen;
 
 // open json data
-global.json = new jsonOpen('./data.json');
+new jsonOpen('./data.json');
 
 http.createServer(function handleRequest(req, res) {
-  
+
   // CORS
   res.setHeader("Access-Control-Allow-Origin", "*");
   res.setHeader("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-  
+
   // REST Methods and JSON
   res.setHeader("Access-Control-Allow-Methods", "POST");
   res.setHeader("Content-Type", "application/json");
-   
+
   // Get request body
   bodyParser(req, function(body) {
-    
+
     req.body = body;
 
     // If a key exists and matches the one in config.js, set auth to true
     var auth = req.body.key == config.key ? true : false;
-   
+
     router(req, auth, function (data) {
 
       if (typeof data === 'object' && data.statusCode) {
@@ -36,7 +36,7 @@ http.createServer(function handleRequest(req, res) {
       }
 
       res.end(JSON.stringify(data));
-    
+
     });
 
   });

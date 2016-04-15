@@ -23,11 +23,11 @@ function jsonParser(data) {
       body = JSON.parse(rawBody);
     }
 
-  } 
+  }
 
   catch (ex) {
     body = {error: ex};
-  } 
+  }
 
   finally {
     return body;
@@ -57,12 +57,13 @@ module.exports.jsonOpen = jsonOpen;
 function jsonOpen (fp) {
 
   if (!fp) {
-    return; 
+    return;
   }
 
   this.fp = fp;
 
   try {
+    console.log(require(this.fp));
     this.raw = this.initSchema(require(this.fp));
   }
 
@@ -77,15 +78,13 @@ jsonOpen.prototype.initSchema = function(raw) {
 
   return {
     cursor: raw.cursor || 0,
-    data: raw.data || new Array() 
+    data: raw.data || new Array()
   };
 
 };
 
 jsonOpen.prototype.writeSync = function() {
-  
+
   fs.writeFileSync(this.fp, JSON.stringify(this.raw));
 
 };
-
-

@@ -1,16 +1,13 @@
 {
-  "name": "muletter-server",
-  "version": "0.2.0",
-  "description": "backend managment subsribers of a µLetter / MuLetter app, a lightweight and open source newsletter management system",
+  "name": "MuList",
+  "version": "0.1.0",
+  "description": "lightweight node server to make a mailing list",
   "keywords": [
     "Node.js",
     "newsletter",
     "API",
-    "MuLetter",
-    "MuLetter.js",
-    "muletter.js",
-    "μLetter",
     "mailing",
+    "list",
     "server"
   ],
   "author": {
@@ -18,14 +15,20 @@
     "email": "kim.himitsu@gmail.com",
     "url": "http://kimihub.github.io/"
   },
-  "homepage": "http://opentoolbox.github.io/muletter-server",
+  "homepage": "http://opentoolbox.github.io/mulist",
   "repository": {
     "type": "git",
-    "url": "https://github.com/opentoolbox/muletter-server"
+    "url": "https://github.com/opentoolbox/mulist"
+  },
+  "engines": {
+    "node": ">=0.10.0"
   },
   "devDependencies": {
     "request": "2.57.x",
-    "prompt": "0.2.x",
+    "prompt": "0.2.x"
   },
-  "main": "server.js"
+  "main": "server.js",
+  "scripts": {
+    "test": "node test/main.js"
+  }
 }
