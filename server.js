@@ -5,10 +5,7 @@ config = require('./config'),
 errors = require('./errors'),
 router = require('./router')
 bodyParser = require('./tools').bodyParser,
-jsonOpen = require('./tools').jsonOpen;
-
-// open json data
-new jsonOpen('./data.json');
+jdb = require('./tools').jdb();
 
 http.createServer(function handleRequest(req, res) {
 

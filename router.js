@@ -13,7 +13,7 @@ module.exports = function Router (req, auth, next) {
 
   // parse url
   var parsedUrl = require('url').parse(req.url).pathname;
-  
+
   // trim parsedUrl
   if (parsedUrl.charAt(0) == '/') {
     parsedUrl = parsedUrl.substr(1, parsedUrl.length-1);

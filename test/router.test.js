@@ -1,34 +1,32 @@
 var Router = require('../router');
 var _ = console.log;
 
-function bindTest(toBind, time){
-  setTimeout(function() {
-    _ (" ");
-    toBind();
-  }, (time? time: 1000));
-}
-
-securityTests();
-
-function securityTests(){
-  _('Security tests');
-  _('it should return an error');
-
-  _('Private method');
+module.exports = function (){
+  _('Fake public url : /_posts');
   var req = {url: '/_posts'};
   Router(req, 1, function(data) {
     _(data);
   });
   _ (" ");
-  _('Unauthorized');
+  _('Unsigned url : /export');
   var req = {url: '/export'};
   Router(req, 0, function(data) {
     _(data);
   });
   _ (" ");
-  _('Route does not exist');
-  var req = {url: '/fakemethod/'};
+
+  _('Signed url : /export');
+  var req = {url: '/export'};
   Router(req, 1, function(data) {
     _(data);
   });
+  _ (" ");
+
+  _('Fake signed url : /delete');
+  var req = {url: '/delete'};
+  Router(req, 1, function(data) {
+    _(data);
+  });
+  _ (" ");
+
 }

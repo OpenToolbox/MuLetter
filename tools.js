@@ -1,6 +1,6 @@
 'use strict';
 
-var fs = require('fs');
+var fs = require('fs'), jdbInstance;
 
 module.exports.isEmail = isEmail;
 
@@ -52,39 +52,40 @@ function bodyParser(req, cb) {
 
 }
 
-module.exports.jsonOpen = jsonOpen;
+module.exports.jdb = jdbSingleton;
 
-function jsonOpen (fp) {
-
-  if (!fp) {
-    return;
-  }
-
-  this.fp = fp;
+function jdb () {
 
   try {
-    console.log(require(this.fp));
-    this.raw = this.initSchema(require(this.fp));
+    this.initSchema(JSON.parse(fs.readFileSync('./data.json')));
   }
 
   catch (ex) {
-    this.raw = this.initSchema({});
+    this.initSchema({});
     this.writeSync();
   }
 
 }
 
-jsonOpen.prototype.initSchema = function(raw) {
+jdb.prototype.initSchema = function(raw) {
 
-  return {
-    cursor: raw.cursor || 0,
-    data: raw.data || new Array()
-  };
+  this.cursor = raw.cursor || 0;
+  this.data = raw.data || new Array();
 
 };
 
-jsonOpen.prototype.writeSync = function() {
+jdb.prototype.writeSync = function() {
 
-  fs.writeFileSync(this.fp, JSON.stringify(this.raw));
+  fs.writeFileSync('./data.json', JSON.stringify({cursor: this.cursor, data: this.data}));
 
 };
+
+function jdbSingleton() {
+  if (typeof jdbInstance === 'object') {
+    return jdbInstance;
+  }
+  else {
+    jdbInstance = new jdb();
+    return jdbInstance;
+  }
+}
