@@ -84,6 +84,7 @@
 **Parameters**
 
     {
+      "key": "yourKey",
       "email": "user@domail.com"
     }
 

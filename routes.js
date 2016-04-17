@@ -43,6 +43,10 @@ module.exports.add = function (req, auth, next) {
 
 module.exports.remove = function (req, auth, next) {
 
+  if (!auth) {
+    return next(errors.Unauthorized());
+  }
+
   var email = req.body.email, index;
 
   if (!email || email && !emailRegExp.test(email)) {
