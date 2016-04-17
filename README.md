@@ -1,6 +1,6 @@
 # µLetter
 
-**µLetter** or **MuLetter** is a lightweight node server to send a newsletter
+**µLetter** or **MuLetter** is a small node http server to send mass emails (lower than 1000 emails)
 
 
 ## Clone, Config, Deploy
@@ -25,7 +25,7 @@
     {
       "key": "yourKey",
       "to": "kim@gmail.com\nkim@outlook.com\nkim@yahoo.com\n...",
-      "subject": "newsletter title",
+      "subject": "the title",
       "body": "Lorem ipsum dolor sit amet ..."
     }
 
@@ -47,7 +47,7 @@
 
 ### Check status
 
-The last logs are removed every time a newsletter is sent
+The last logs are removed every time a mass email is sent
 
 **Request**
 
