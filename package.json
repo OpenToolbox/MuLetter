@@ -21,13 +21,13 @@
     "url": "https://github.com/opentoolbox/mulist"
   },
   "engines": {
-    "node": ">=0.10.0"
+    "node": ">=0.10"
   },
   "devDependencies": {
     "request": "2.57.x"
   },
   "main": "server.js",
   "scripts": {
-    "test": "node test/main.js"
+    "test": "node test/server.test.js"
   }
 }

@@ -1,31 +1,26 @@
-var Router = require('../router'), _ = console.log;
+var Router = require('../router'), log = console.log;
 
 module.exports = function (){
-  _('Fake public url : /_posts');
-  var req = {url: '/_posts'};
-  Router(req, 1, function(data) {
-    _(data);
-  });
-  _ (" ");
-  _('Unsigned url : /export');
-  var req = {url: '/export'};
-  Router(req, 0, function(data) {
-    _(data);
-  });
-  _ (" ");
 
-  _('Signed url : /export');
+  log('> Fake public url : /logposts');
+  Router({url: '/logposts'}, 1, function(data) {
+    log(data);
+  });
+
+  log('> Unsigned url : /export');
+  Router({url: '/export'}, 0, function(data) {
+    log(data);
+  });
+
+  log('> Signed url : /export');
   var req = {url: '/export'};
   Router(req, 1, function(data) {
-    _(data);
+    log(data);
   });
-  _ (" ");
 
-  _('Fake signed url : /delete');
-  var req = {url: '/delete'};
-  Router(req, 1, function(data) {
-    _(data);
+  log('> Fake signed url : /delete');
+  Router({url: '/delete', 1, function(data) {
+    log(data);
   });
-  _ (" ");
 
 }
