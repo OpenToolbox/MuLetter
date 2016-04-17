@@ -15,7 +15,7 @@ http.createServer(function handleRequest(req, res) {
   res.setHeader("Access-Control-Allow-Methods", "POST");
   res.setHeader("Content-Type", "application/json");
 
-  // Body Parser
+  // Get Body Data
   var buffer = '';
   req.setEncoding('utf8');
   req.on('data', function(chunk) {
@@ -24,33 +24,23 @@ http.createServer(function handleRequest(req, res) {
 
   req.on('end', function() {
 
-    try {
-      req.body = JSON.parse(buffer.trim());
-    }
+    // Body Parser : QueryString to Object
+    req.body = require('querystring').parse(buffer.trim());
 
-    catch (ex) {
-      console.log('[Exception]', ex);
-      req.body = {};
-    }
+    // Authentication
+    var auth = req.body.key == config.key ? true : false;
 
-    finally {
+    router(req, auth, function (data) {
 
-      // Authentication
-      var auth = req.body.key == config.key ? true : false;
+      // Errors Status Code
+      if (typeof data === 'object' && data.errors && data.code) {
+        res.statusCode = errors[data.code];
+      }
 
-      router(req, auth, function (data) {
+      // Send JSON data
+      res.end(JSON.stringify(data));
 
-        // Errors Status Code
-        if (typeof data === 'object' && data.errors && data.code) {
-          res.statusCode = errors[data.code];
-        }
-
-        // Send JSON data
-        res.end(JSON.stringify(data));
-
-      });
-
-    }
+    });
 
   });
 
