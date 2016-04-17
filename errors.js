@@ -1,38 +1,35 @@
 'use strict';
 
-function ErrorAPI () {}
+module.exports.ConflictError = 409;
+module.exports.NotFoundError = 404;
+module.exports.UnauthorizedError = 401;
 
-ErrorAPI.prototype.Conflict = function (msg, err) {
+module.exports.Conflict = function (msg, err) {
 
   return {
-    "statusCode": 409,
     "code": "ConflictError",
-    "message": msg,
-    "errors": (err && typeof err.errors !== 'undefined')? err.errors:err
+    "message": msg? msg : "",
+    "errors": err && typeof err.errors !== 'undefined' ? err.errors : (err? err: {})
   };
 
 };
 
-ErrorAPI.prototype.NotFound = function (msg, err) {
+module.exports.NotFound = function (msg, err) {
 
   return {
-    "statusCode": 404,
     "code": "NotFoundError",
-    "message": msg,
-    "errors": (err && typeof err.errors !== 'undefined')? err.errors:err
+    "message": msg? msg : "",
+    "errors": err && typeof err.errors !== 'undefined' ? err.errors : (err? err: {})
   };
 
 };
 
-ErrorAPI.prototype.Unauthorized = function (msg, err) {
+module.exports.Unauthorized = function (msg, err) {
 
   return {
-    "statusCode": 401,
     "code": "UnauthorizedError",
-    "message": msg,
-    "errors": (err && typeof err.errors !== 'undefined')? err.errors:err
+    "message": msg? msg : "",
+    "errors": err && typeof err.errors !== 'undefined' ? err.errors : (err? err: {})
   };
 
 };
-
-module.exports = new ErrorAPI();
