@@ -3,9 +3,7 @@
 var http = require('http'),
 config = require('./config'),
 errors = require('./errors'),
-router = require('./router')
-bodyParser = require('./tools').bodyParser,
-jdb = require('./tools').jdb();
+router = require('./router');
 
 http.createServer(function handleRequest(req, res) {
 
@@ -17,29 +15,47 @@ http.createServer(function handleRequest(req, res) {
   res.setHeader("Access-Control-Allow-Methods", "POST");
   res.setHeader("Content-Type", "application/json");
 
-  // Get request body
-  bodyParser(req, function(body) {
+  // Body Parser
+  var buffer = '';
+  req.setEncoding('utf8');
+  req.on('data', function(chunk) {
+    buffer += chunk;
+  });
 
-    req.body = body;
+  req.on('end', function() {
 
-    // If a key exists and matches the one in config.js, set auth to true
-    var auth = req.body.key == config.key ? true : false;
+    try {
+      req.body = JSON.parse(buffer.trim());
+    }
 
-    router(req, auth, function (data) {
+    catch (ex) {
+      console.log('[Exception]', ex);
+      req.body = {};
+    }
 
-      if (typeof data === 'object' && data.statusCode) {
-        res.statusCode = data.statusCode;
-        delete data.statusCode;
-      }
+    finally {
 
-      res.end(JSON.stringify(data));
+      // Authentication
+      var auth = req.body.key == config.key ? true : false;
 
-    });
+      router(req, auth, function (data) {
+
+        // Errors Status Code
+        if (typeof data === 'object' && data.errors && data.code) {
+          res.statusCode = errors[data.code];
+        }
+
+        // Send JSON data
+        res.end(JSON.stringify(data));
+
+      });
+
+    }
 
   });
 
 }).listen(config.port, config.host, function() {
 
-  console.log('HTTP Server is running on : ' + config.host + ':' + config.port);
+  console.log('HTTP(S) Server is running on : ' + config.host + ':' + config.port);
 
 });

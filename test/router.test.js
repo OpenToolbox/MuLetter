@@ -1,5 +1,4 @@
-var Router = require('../router');
-var _ = console.log;
+var Router = require('../router'), _ = console.log;
 
 module.exports = function (){
   _('Fake public url : /_posts');

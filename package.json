@@ -24,8 +24,7 @@
     "node": ">=0.10.0"
   },
   "devDependencies": {
-    "request": "2.57.x",
-    "prompt": "0.2.x"
+    "request": "2.57.x"
   },
   "main": "server.js",
   "scripts": {

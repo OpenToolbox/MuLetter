@@ -1,9 +1,9 @@
-var request = require('request');
-var config = require('../config');
-var _ = console.log;
-var exec = require('child_process').exec;
-
-bindTest(Add);
+var request = require('request'),
+config = require('../config'),
+_ = console.log,
+exec = require('child_process').exec,
+routerTest = require('./router.test'),
+routesTest = require('./routes.test');
 
 function bindTest(toBind, time){
   setTimeout(function() {
@@ -12,11 +12,13 @@ function bindTest(toBind, time){
   }, (time? time: 1000));
 }
 
-//require('./routes.test');
+// Router
+routerTest();
 
-//Remove.bind(null, result.email)
+// Routes
+
+// Server
 exec('node server.js', function serverTest() {
-
 	request.post({url:config.host+'/export/', form: {key:config.key}}, function (err, response, body) {
 		_(response);
 	});

@@ -101,7 +101,7 @@
 
 ### Import mailing list
 
-It will remove all emails older than the last export date
+It will remove all emails older than the last export date or than the cursor parameter. Set cursor to **0** to cancel the last export.
 
 **Request**
 
@@ -111,6 +111,7 @@ It will remove all emails older than the last export date
 
     {
       "key": "yourKey",
+      "cursor": "2", // not required
       "data":  "kim@gmail.com\nsam@outlook.com\nseif785@yahoo.com\n..."
     }
 
