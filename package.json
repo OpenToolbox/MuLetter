@@ -1,9 +1,11 @@
 {
   "name": "MuLetter",
   "version": "0.2.0",
-  "description": "lightweight node server to send a newsletter",
+  "description": "HTTP mass mailer",
   "keywords": [
     "Node.js",
+    "mass",
+    "mailer",
     "newsletter",
     "API",
     "mailing",
