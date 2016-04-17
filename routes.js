@@ -59,6 +59,11 @@ module.exports.remove = function (req, auth, next) {
     return next(errors.Conflict('does not exist'));
   }
 
+  // Reajust cursor if higher than the index found
+  if (index < cursor) {
+    cursor -= 1;
+  }
+
   data.splice(index, 1);
   writeSync();
 
