@@ -1,30 +1,25 @@
-var HtmlWebpackPlugin = require('html-webpack-plugin'),
-ExtractTextPlugin = require("extract-text-webpack-plugin");
+var HtmlWebpackPlugin = require('html-webpack-plugin');
 
 module.exports = {
     entry: {
-      render: './render.js',
-      style: './style.css'
+      bundle: ['./render.js', './style.css']
     },
     context: __dirname + '/',
     output: {
         path: __dirname + '/dist/web/',
-        filename: 'render.js'
+        filename: 'bundle.js'
     },
     module: {
         loaders: [
-            { test: /\.css$/, loader: ExtractTextPlugin.extract('style-loader', 'css-loader') },
+            { test: /\.css$/, loader: 'style!css' },
             { test: /\.js?$/, exclude: /node_modules/, loader: 'babel', query: { presets: ['es2015', 'react'] } }
         ]
     },
     plugins: [
-        new ExtractTextPlugin('style.css', {
-            allChunks: true
-        }),
         new HtmlWebpackPlugin({
           filename: 'index.html',
-          template: 'index.html',
-          inject: false
+          templateContent: '<head><title>MuLetter</title></head><body><div id=root></div></body>',
+          inject: true
         })
     ]
 };
