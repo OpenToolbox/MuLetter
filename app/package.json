@@ -1,0 +1,27 @@
+{
+  "name": "muletter",
+  "version": "0.1.0",
+  "license": "GPL-3.0",
+  "description": "Desktop mass mailer",
+  "keywords": [
+    "email",
+    "Mu",
+    "μ",
+    "mailer",
+    "mass",
+    "smtp",
+    "letter",
+    "mailing",
+    "desktop"
+  ],
+  "author": {
+    "name": "Kimi",
+    "email": "kim.himitsu@gmail.com",
+    "url": "http://kimihub.github.io/"
+  },
+  "main": "main.js",
+  "homepage": "http://opentoolbox.github.io/muletter",
+  "dependencies": {
+    "nodemailer": "^2.3.2"
+  }
+}
