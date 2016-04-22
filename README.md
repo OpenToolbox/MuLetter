@@ -10,7 +10,7 @@ To run MuLetter in development you need to install **Node.js** and **npm** : htt
 
 ## Installation
 
-    $ git clone https://github.com/opentoolbox/muletter.git
+    $ git clone https://github.com/muletter/muletter.git
     $ cd muletter
     $ npm install
 

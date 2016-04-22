@@ -20,7 +20,7 @@
     "url": "http://kimihub.github.io/"
   },
   "main": "main.js",
-  "homepage": "http://opentoolbox.github.io/muletter",
+  "homepage": "http://muletter.github.io",
   "dependencies": {
     "nodemailer": "^2.3.2"
   }
