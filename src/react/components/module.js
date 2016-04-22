@@ -1,7 +1,7 @@
-const React = require('react');
-let DOM = React.DOM, div = DOM.div;
+import React, {DOM} from 'react';
+let div = DOM.div;
 
-module.exports = React.createClass({
+export default React.createClass({
 
   getInitialState: function() {
     return {};
@@ -18,7 +18,7 @@ module.exports = React.createClass({
 
   render: function() {
 
-    return div({className:'wrapper'},'you are here')
+    return div({className:'wrapper'},'moduletest')
   }
 
 });

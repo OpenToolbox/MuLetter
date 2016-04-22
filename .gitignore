@@ -1,1 +1,6 @@
 node_modules
+npm-debug.log
+dist
+app/index.html
+app/main.js
+app/bundle.js
