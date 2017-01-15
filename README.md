@@ -1,3 +1,8 @@
+[ON HOLD / POSTPONED]
+Please look at the CLI project instead : https://github.com/kimihub/muletter
+
+=========================================
+
 #µLetter
 
 **µLetter** or **MuLetter** is a desktop mass mailer.
